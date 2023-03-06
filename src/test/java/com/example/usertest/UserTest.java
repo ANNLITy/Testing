@@ -4,12 +4,25 @@ import com.example.usertest.exeption.SameInfoException;
 import com.example.usertest.exeption.WrongEmailException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 
 class UserTest {
     private static final String login = "login123";
     private static final String loginAndEmail = "login123";
     private static final String email ="email@gmail.ru";
+    private static final String WrongEmail ="emailgmailru";
+
+    public static Stream<Arguments> paramsForTestWithWrongEmail() {
+        return Stream.of(
+                Arguments.of(login,WrongEmail)
+        );
+    }
+
     @Test
     public void shouldReturnLoginAndEmail() throws Exception {
         User user = new User(login, email);
@@ -26,7 +39,8 @@ class UserTest {
         Assertions.assertNull(resultEmail);
         Assertions.assertNull(resultLogin);
     }
-    @Test
+    @ParameterizedTest
+    @MethodSource("paramsForTestWithWrongEmail")
     public void shouldThrowWrongEmailException(String login, String email) {
         Assertions.assertThrows(WrongEmailException.class, () -> new User(login, email));
 
